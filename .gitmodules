@@ -1,0 +1,3 @@
+[submodule "my_plugins/ycm"]
+	path = my_plugins/ycm
+	url = git@github.com:ycm-core/YouCompleteMe.git
