@@ -6,7 +6,7 @@ call ale#Set('lua_language_server_config', {})
 
 call ale#linter#Define('lua', {
 \   'name': 'lua_language_server',
-\   'aliases': ['lua-language-server', 'lua_ls'],
+\   'aliases': ['lua-language-server'],
 \   'lsp': 'stdio',
 \   'executable': {b -> ale#Var(b, 'lua_language_server_executable')},
 \   'command': '%e',

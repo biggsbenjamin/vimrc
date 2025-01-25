@@ -1,34 +1,29 @@
 " Author: Andrew Balmos - <andrew@balmos.org>
 " Description: chktex for LaTeX files
 
-call ale#Set('tex_chktex_executable', 'chktex')
-call ale#Set('tex_chktex_options', '-I')
+let g:ale_tex_chktex_executable =
+\   get(g:, 'ale_tex_chktex_executable', 'chktex')
 
-function! ale_linters#tex#chktex#GetExecutable(buffer) abort
-    return ale#Var(a:buffer, 'tex_chktex_executable')
-endfunction
+let g:ale_tex_chktex_options =
+\   get(g:, 'ale_tex_chktex_options', '-I')
 
-function! ale_linters#tex#chktex#GetCommand(buffer, version) abort
-    let l:options = ''
-
-    " Avoid bug when used without -p (last warning has gibberish for a filename)
-    let l:options .= ' -v0 -p stdin -q'
-
-    " Avoid bug of reporting wrong column when using tabs (issue #723)
-    if ale#semver#GTE(a:version, [1, 7, 7])
-        let l:options .= ' -S TabSize=1'
-    endif
-
+function! ale_linters#tex#chktex#GetCommand(buffer) abort
     " Check for optional .chktexrc
-    let l:chktex_config = ale#path#FindNearestFile(a:buffer, '.chktexrc')
+    let l:chktex_config = ale#path#FindNearestFile(
+    \   a:buffer,
+    \   '.chktexrc')
+
+    let l:command = ale#Var(a:buffer, 'tex_chktex_executable')
+    " Avoid bug when used without -p (last warning has gibberish for a filename)
+    let l:command .= ' -v0 -p stdin -q'
 
     if !empty(l:chktex_config)
-        let l:options .= ' -l ' . ale#Escape(l:chktex_config)
+        let l:command .= ' -l ' . ale#Escape(l:chktex_config)
     endif
 
-    let l:options .= ' ' . ale#Var(a:buffer, 'tex_chktex_options')
+    let l:command .= ' ' . ale#Var(a:buffer, 'tex_chktex_options')
 
-    return '%e' . l:options
+    return l:command
 endfunction
 
 function! ale_linters#tex#chktex#Handle(buffer, lines) abort
@@ -53,12 +48,7 @@ endfunction
 
 call ale#linter#Define('tex', {
 \   'name': 'chktex',
-\   'executable': function('ale_linters#tex#chktex#GetExecutable'),
-\   'command': {buffer -> ale#semver#RunWithVersionCheck(
-\       buffer,
-\       ale_linters#tex#chktex#GetExecutable(buffer),
-\       '%e --version',
-\       function('ale_linters#tex#chktex#GetCommand'),
-\   )},
+\   'executable': 'chktex',
+\   'command': function('ale_linters#tex#chktex#GetCommand'),
 \   'callback': 'ale_linters#tex#chktex#Handle'
 \})

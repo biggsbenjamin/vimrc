@@ -78,30 +78,9 @@ function! s:parser_varend() dict abort
         call extend(ret, self.placeholder())
     elseif self.same('/')
         call add(ret, self.subst())
-    elseif self.next == '|'
-        call add(ret, self.select())
     endif
     call self.same('}')
     return ret
-endfunction
-
-function! s:parser_select() dict abort
-    let items = []
-    while self.same('|')
-        let str = self.text('|}')
-        call s:mark_vars_in_select(str)
-        call add(items, str)
-    endwhile
-    return ['select'] + items
-endfunction
-
-function! s:mark_vars_in_select(str)
-    for item in a:str
-        if type(item) == type([])
-            call add(item, { 'select' : 1 })
-        endif
-        unlet! item " avoid E706
-    endfor
 endfunction
 
 function! s:parser_placeholder() dict abort
@@ -192,7 +171,6 @@ endfunction
 
 function! s:parser_text(till) dict abort
     let ret = []
-    let till = '\V\[' . escape(a:till, '\') . ']'
     let target = ret
 
     while self.pos < self.len
@@ -228,7 +206,7 @@ function! s:parser_text(till) dict abort
         endif
 
         " Empty lines are ignored if this is tested at the start of an iteration
-        if self.next =~# till
+        if self.next ==# a:till
             break
         endif
     endwhile
@@ -290,26 +268,11 @@ endfunction
 function! s:parser_create_stubs() dict abort
 
     for [id, dict] in items(self.vars)
-
-        " only instance is in a selection, so remove it
-        if len(dict.instances) == 1 && type(dict.instances[0][-1]) == type({})
-                    \ && dict.instances[0][-1] == { 'select' : 1 }
-            call remove(self.vars, id)
-            continue
-        endif
-
         for i in dict.instances
             if len(i) > 1 && type(i[1]) != type({})
                 if !has_key(dict, 'placeholder')
-                    if type(i[1]) == type([]) && i[1][0] == 'select'
-                        let dict.placeholder = i[1][1]
-                        let dict.items = i[1][1:]
-                        let i[1] = dict.placeholder
-                        call add(i, dict)
-                    else
-                        let dict.placeholder = i[1:]
-                        call add(i, dict)
-                    endif
+                    let dict.placeholder = i[1:]
+                    call add(i, dict)
                 else
                     unlet i[1:]
                     call s:create_mirror_stub(i, dict)
@@ -318,7 +281,6 @@ function! s:parser_create_stubs() dict abort
                 call s:create_mirror_stub(i, dict)
             endif
         endfor
-
         if !has_key(dict, 'placeholder')
             let dict.placeholder = []
             let j = 0
@@ -330,7 +292,6 @@ function! s:parser_create_stubs() dict abort
             call add(dict.instances[j], dict)
             call filter(dict.mirrors, 'v:val isnot oldstub')
         endif
-
         unlet dict.instances
     endfor
 
@@ -340,13 +301,9 @@ function! s:create_mirror_stub(mirror, dict)
     let mirror = a:mirror
     let dict = a:dict
     let stub = get(mirror, 1, {})
-    if stub == { 'select' : 1 }
-        unlet mirror[1:]
-    else
-        call add(mirror, stub)
-        let dict.mirrors = get(dict, 'mirrors', [])
-        call add(dict.mirrors, stub)
-    endif
+    call add(mirror, stub)
+    let dict.mirrors = get(dict, 'mirrors', [])
+    call add(dict.mirrors, stub)
 endfunction
 
 function! snipmate#parse#snippet(text, ...) abort
@@ -361,6 +318,6 @@ endfunction
 
 call extend(s:parser_proto, snipmate#util#add_methods(s:sfile(), 'parser',
             \ [ 'advance', 'same', 'id', 'add_var', 'var', 'varend',
-            \   'line', 'string', 'create_stubs', 'pat', 'select',
+            \   'line', 'string', 'create_stubs', 'pat',
             \   'placeholder', 'subst', 'expr', 'text', 'parse',
             \ ]), 'error')

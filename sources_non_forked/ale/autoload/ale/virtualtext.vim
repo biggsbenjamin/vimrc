@@ -31,8 +31,7 @@ let g:ale_virtualtext_delay = get(g:, 'ale_virtualtext_delay', 10)
 " Controls the positioning of virtualtext
 let g:ale_virtualtext_column = get(g:, 'ale_virtualtext_column', 0)
 let g:ale_virtualtext_maxcolumn = get(g:, 'ale_virtualtext_maxcolumn', 0)
-" If 1, only show the first problem with virtualtext.
-let g:ale_virtualtext_single = get(g:, 'ale_virtualtext_single', 1)
+let g:ale_virtualtext_single = get(g:,'ale_virtualtext_single',0)
 
 let s:cursor_timer = get(s:, 'cursor_timer', -1)
 let s:last_pos = get(s:, 'last_pos', [0, 0, 0])
@@ -274,32 +273,6 @@ function! ale#virtualtext#ShowCursorWarningWithDelay() abort
     endif
 endfunction
 
-function! ale#virtualtext#CompareSeverityPerLine(left, right) abort
-    " Compare lines
-    if a:left.lnum < a:right.lnum
-        return -1
-    endif
-
-    if a:left.lnum > a:right.lnum
-        return 1
-    endif
-
-    let l:left_priority = ale#util#GetItemPriority(a:left)
-    let l:right_priority = ale#util#GetItemPriority(a:right)
-
-    " Put highest priority items first.
-    if l:left_priority > l:right_priority
-        return -1
-    endif
-
-    if l:left_priority < l:right_priority
-        return 1
-    endif
-
-    " Put the first seen problem first.
-    return a:left.col - a:right.col
-endfunction
-
 function! ale#virtualtext#SetTexts(buffer, loclist) abort
     if !has('nvim') && s:emulate_virt
         return
@@ -307,19 +280,17 @@ function! ale#virtualtext#SetTexts(buffer, loclist) abort
 
     call ale#virtualtext#Clear(a:buffer)
 
-    let l:buffer_list = filter(copy(a:loclist), 'v:val.bufnr == a:buffer')
+    let l:filter = ale#Var(a:buffer,'virtualtext_single')
+    let l:seen = {}
 
-    if ale#Var(a:buffer,'virtualtext_single')
-        " If we want a single problem per line, sort items on each line by
-        " highest severity and then lowest column position, then de-duplicate
-        " the items by line.
-        call uniq(
-        \   sort(l:buffer_list, function('ale#virtualtext#CompareSeverityPerLine')),
-        \   {a, b -> a.lnum - b.lnum}
-        \)
-    endif
+    for l:item in a:loclist
+        if l:item.bufnr == a:buffer
+            let l:line = max([1, l:item.lnum])
 
-    for l:item in l:buffer_list
-        call ale#virtualtext#ShowMessage(a:buffer, l:item)
+            if !has_key(l:seen,l:line) || l:filter == 0
+                call ale#virtualtext#ShowMessage(a:buffer, l:item)
+                let l:seen[l:line] = 1
+            endif
+        endif
     endfor
 endfunction

@@ -61,8 +61,7 @@ endfunction
 " Define the hdl_checker linter for a given filetype.
 function! ale#handlers#hdl_checker#DefineLinter(filetype) abort
     call ale#linter#Define(a:filetype, {
-    \   'name': 'hdl_checker',
-    \   'aliases': ['hdl-checker'],
+    \   'name': 'hdl-checker',
     \   'lsp': 'stdio',
     \   'language': a:filetype,
     \   'executable': function('ale#handlers#hdl_checker#GetExecutable'),
@@ -71,3 +70,4 @@ function! ale#handlers#hdl_checker#DefineLinter(filetype) abort
     \   'initialization_options': function('ale#handlers#hdl_checker#GetInitOptions'),
     \ })
 endfunction
+

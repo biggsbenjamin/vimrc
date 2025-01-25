@@ -1,5 +1,5 @@
 " Author: Jon Parise <jon@indelible.org>
-" Description: ElixirLS integration (https://github.com/elixir-lsp/elixir-ls)
+" Description: ElixirLS integration (https://github.com/JakeBecker/elixir-ls)
 
 call ale#Set('elixir_elixir_ls_release', 'elixir-ls')
 call ale#Set('elixir_elixir_ls_config', {})
@@ -12,8 +12,7 @@ function! ale_linters#elixir#elixir_ls#GetExecutable(buffer) abort
 endfunction
 
 call ale#linter#Define('elixir', {
-\   'name': 'elixir_ls',
-\   'aliases': ['elixir-ls', 'elixirls'],
+\   'name': 'elixir-ls',
 \   'lsp': 'stdio',
 \   'executable': function('ale_linters#elixir#elixir_ls#GetExecutable'),
 \   'command': function('ale_linters#elixir#elixir_ls#GetExecutable'),

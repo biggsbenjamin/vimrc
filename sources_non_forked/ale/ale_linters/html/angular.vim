@@ -48,7 +48,7 @@ endfunction
 
 call ale#linter#Define('html', {
 \   'name': 'angular',
-\   'aliases': ['angular-language-server', 'angularls'],
+\   'aliases': ['angular-language-server'],
 \   'lsp': 'stdio',
 \   'executable': function('ale_linters#html#angular#GetExecutable'),
 \   'command': function('ale_linters#html#angular#GetCommand'),

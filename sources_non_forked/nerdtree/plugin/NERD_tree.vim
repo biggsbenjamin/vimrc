@@ -29,7 +29,6 @@ set cpoptions&vim
 "SECTION: Initialize variable calls and other random constants {{{2
 let g:NERDTreeAutoCenter            = get(g:, 'NERDTreeAutoCenter',            1)
 let g:NERDTreeAutoCenterThreshold   = get(g:, 'NERDTreeAutoCenterThreshold',   3)
-let g:NERDTreeCaseSensitiveFS       = get(g:, 'NERDTreeCaseSensitiveFS',       2)
 let g:NERDTreeCaseSensitiveSort     = get(g:, 'NERDTreeCaseSensitiveSort',     0)
 let g:NERDTreeNaturalSort           = get(g:, 'NERDTreeNaturalSort',           0)
 let g:NERDTreeSortHiddenFirst       = get(g:, 'NERDTreeSortHiddenFirst',       1)
@@ -53,8 +52,6 @@ let g:NERDTreeShowFiles             = get(g:, 'NERDTreeShowFiles',             1
 let g:NERDTreeShowHidden            = get(g:, 'NERDTreeShowHidden',            0)
 let g:NERDTreeShowLineNumbers       = get(g:, 'NERDTreeShowLineNumbers',       0)
 let g:NERDTreeSortDirs              = get(g:, 'NERDTreeSortDirs',              1)
-let g:NERDTreeFileLines             = get(g:, 'NERDTreeFileLines',             0)
-
 
 if !nerdtree#runningWindows() && !nerdtree#runningCygwin()
     let g:NERDTreeDirArrowExpandable  = get(g:, 'NERDTreeDirArrowExpandable',  '▸')
@@ -101,7 +98,6 @@ endif
 
 "SECTION: Init variable calls for key mappings {{{2
 let g:NERDTreeMapCustomOpen      = get(g:, 'NERDTreeMapCustomOpen',      '<CR>')
-let g:NERDTreeMapJumpBookmarks   = get(g:, 'NERDTreeMapJumpBookmarks',   'gb')
 let g:NERDTreeMapActivateNode    = get(g:, 'NERDTreeMapActivateNode',    'o')
 let g:NERDTreeMapChangeRoot      = get(g:, 'NERDTreeMapChangeRoot',      'C')
 let g:NERDTreeMapChdir           = get(g:, 'NERDTreeMapChdir',           'cd')
@@ -132,7 +128,6 @@ let g:NERDTreeMapToggleBookmarks = get(g:, 'NERDTreeMapToggleBookmarks', 'B')
 let g:NERDTreeMapToggleFiles     = get(g:, 'NERDTreeMapToggleFiles',     'F')
 let g:NERDTreeMapToggleFilters   = get(g:, 'NERDTreeMapToggleFilters',   'f')
 let g:NERDTreeMapToggleHidden    = get(g:, 'NERDTreeMapToggleHidden',    'I')
-let g:NERDTreeMapToggleFileLines = get(g:, 'NERDTreeMapToggleFileLines', 'FL')
 let g:NERDTreeMapToggleZoom      = get(g:, 'NERDTreeMapToggleZoom',      'A')
 let g:NERDTreeMapUpdir           = get(g:, 'NERDTreeMapUpdir',           'u')
 let g:NERDTreeMapUpdirKeepOpen   = get(g:, 'NERDTreeMapUpdirKeepOpen',   'U')
@@ -147,12 +142,11 @@ call nerdtree#loadClassFiles()
 "============================================================
 call nerdtree#ui_glue#setupCommands()
 
-
 " SECTION: Auto commands {{{1
 "============================================================
 augroup NERDTree
     "Save the cursor position whenever we close the nerd tree
-    exec 'autocmd BufLeave,WinLeave '. g:NERDTreeCreator.BufNamePrefix() .'* call nerdtree#onBufLeave()'
+    exec 'autocmd BufLeave,WinLeave '. g:NERDTreeCreator.BufNamePrefix() .'* if g:NERDTree.IsOpen() | call b:NERDTree.ui.saveScreenState() | endif'
 
     "disallow insert mode in the NERDTree
     exec 'autocmd BufEnter,WinEnter '. g:NERDTreeCreator.BufNamePrefix() .'* stopinsert'

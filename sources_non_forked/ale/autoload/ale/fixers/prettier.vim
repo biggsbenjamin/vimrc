@@ -79,7 +79,6 @@ function! ale#fixers#prettier#ApplyFixForVersion(buffer, version) abort
         \    'openapi': 'yaml',
         \    'html': 'html',
         \    'ruby': 'ruby',
-        \    'astro': 'astro',
         \}
 
         for l:filetype in l:filetypes

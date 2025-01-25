@@ -30,25 +30,24 @@ function! ale_linters#bicep#bicep#Command(buffer) abort
 endfunction
 
 function! ale_linters#bicep#bicep#Handle(buffer, lines) abort
-    let l:pattern = '\v^(.*)\((\d+),(\d+)\)\s:\s([a-zA-Z]*)\s([-a-zA-Z0-9]*):\s(.*)'
+    let l:pattern = '\v^.*\((\d+),(\d+)\)\s:\s([a-zA-Z]*)\s([-a-zA-Z0-9]*):\s(.*)'
     let l:output = []
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
-        if l:match[4] is# 'Error'
+        if l:match[3] is# 'Error'
             let l:type = 'E'
-        elseif l:match[4] is# 'Warning'
+        elseif l:match[3] is# 'Warning'
             let l:type = 'W'
         else
             let l:type = 'I'
         endif
 
         call add(l:output, {
-        \   'filename': l:match[1],
-        \   'lnum': l:match[2] + 0,
-        \   'col': l:match[3] + 0,
+        \   'lnum': l:match[1] + 0,
+        \   'col': l:match[2] + 0,
         \   'type': l:type,
-        \   'code': l:match[5],
-        \   'text': l:match[6],
+        \   'code': l:match[4],
+        \   'text': l:match[5],
         \})
     endfor
 

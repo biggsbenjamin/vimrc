@@ -7,7 +7,6 @@ call ale#Set('python_pycln_use_global', get(g:, 'ale_use_global_executables', 0)
 call ale#Set('python_pycln_change_directory', 1)
 call ale#Set('python_pycln_auto_pipenv', 0)
 call ale#Set('python_pycln_auto_poetry', 0)
-call ale#Set('python_pycln_auto_uv', 0)
 call ale#Set('python_pycln_config_file', '')
 
 function! ale#fixers#pycln#GetCwd(buffer) abort
@@ -32,17 +31,12 @@ function! ale#fixers#pycln#GetExecutable(buffer) abort
         return 'poetry'
     endif
 
-    if (ale#Var(a:buffer, 'python_auto_uv') || ale#Var(a:buffer, 'python_pycln_auto_uv'))
-    \ && ale#python#UvPresent(a:buffer)
-        return 'uv'
-    endif
-
     return ale#python#FindExecutable(a:buffer, 'python_pycln', ['pycln'])
 endfunction
 
 function! ale#fixers#pycln#GetCommand(buffer) abort
     let l:executable = ale#fixers#pycln#GetExecutable(a:buffer)
-    let l:exec_args = l:executable =~? 'pipenv\|poetry\|uv$'
+    let l:exec_args = l:executable =~? 'pipenv\|poetry$'
     \   ? ' run pycln'
     \   : ''
 
@@ -53,7 +47,7 @@ function! ale#fixers#pycln#FixForVersion(buffer, version) abort
     let l:executable = ale#fixers#pycln#GetExecutable(a:buffer)
     let l:cmd = [ale#Escape(l:executable)]
 
-    if l:executable =~? 'pipenv\|poetry\|uv$'
+    if l:executable =~? 'pipenv\|poetry$'
         call extend(l:cmd, ['run', 'pycln'])
     endif
 

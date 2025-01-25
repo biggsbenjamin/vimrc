@@ -6,7 +6,6 @@ call ale#Set('python_black_use_global', get(g:, 'ale_use_global_executables', 0)
 call ale#Set('python_black_options', '')
 call ale#Set('python_black_auto_pipenv', 0)
 call ale#Set('python_black_auto_poetry', 0)
-call ale#Set('python_black_auto_uv', 0)
 call ale#Set('python_black_change_directory', 1)
 
 function! ale#fixers#black#GetExecutable(buffer) abort
@@ -20,11 +19,6 @@ function! ale#fixers#black#GetExecutable(buffer) abort
         return 'poetry'
     endif
 
-    if (ale#Var(a:buffer, 'python_auto_uv') || ale#Var(a:buffer, 'python_black_auto_uv'))
-    \ && ale#python#UvPresent(a:buffer)
-        return 'uv'
-    endif
-
     return ale#python#FindExecutable(a:buffer, 'python_black', ['black'])
 endfunction
 
@@ -32,7 +26,7 @@ function! ale#fixers#black#Fix(buffer) abort
     let l:executable = ale#fixers#black#GetExecutable(a:buffer)
     let l:cmd = [ale#Escape(l:executable)]
 
-    if l:executable =~? 'pipenv\|poetry\|uv$'
+    if l:executable =~? 'pipenv\|poetry$'
         call extend(l:cmd, ['run', 'black'])
     endif
 

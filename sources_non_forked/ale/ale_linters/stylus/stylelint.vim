@@ -12,7 +12,6 @@ endfunction
 
 call ale#linter#Define('stylus', {
 \   'name': 'stylelint',
-\   'output_stream': 'both',
 \   'executable': {b -> ale#path#FindExecutable(b, 'stylus_stylelint', [
 \       'node_modules/.bin/stylelint',
 \   ])},

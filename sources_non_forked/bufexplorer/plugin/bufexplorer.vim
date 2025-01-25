@@ -1,5 +1,5 @@
 "============================================================================
-"    Copyright: Copyright (c) 2001-2024, Jeff Lanzarotta
+"    Copyright: Copyright (c) 2001-2022, Jeff Lanzarotta
 "               All rights reserved.
 "
 "               Redistribution and use in source and binary forms, with or
@@ -36,7 +36,7 @@
 " Name Of File: bufexplorer.vim
 "  Description: Buffer Explorer Vim Plugin
 "   Maintainer: Jeff Lanzarotta (my name at gmail dot com)
-" Last Changed: Tuesday, 13 August 2024
+" Last Changed: Tuesday, 20 Sept 2022
 "      Version: See g:bufexplorer_version for version number.
 "        Usage: This file should reside in the plugin directory and be
 "               automatically sourced.
@@ -74,7 +74,7 @@ endif
 "1}}}
 
 " Version number
-let g:bufexplorer_version = "7.4.27"
+let g:bufexplorer_version = "7.4.25"
 
 " Plugin Code {{{1
 " Check for Vim version {{{2
@@ -480,12 +480,13 @@ endfunction
 
 " DisplayBufferList {{{2
 function! s:DisplayBufferList()
+    " Do not set bufhidden since it wipes out the data if we switch away from
+    " the buffer using CTRL-^.
     setlocal buftype=nofile
     setlocal modifiable
     setlocal noreadonly
     setlocal noswapfile
     setlocal nowrap
-    setlocal bufhidden=wipe
 
     call s:SetupSyntax()
     call s:MapKeys()
@@ -770,12 +771,12 @@ function! s:BuildBufferList()
         " Are we to split the path and file name?
         if g:bufExplorerSplitOutPathName
             let type = (g:bufExplorerShowRelativePath) ? "relativepath" : "path"
-            let path = substitute( buf[type], $HOME."\\>", "~", "" )
+            let path = buf[type]
             let pad  = (g:bufExplorerShowUnlisted) ? s:allpads.shortname : s:listedpads.shortname
             let line .= buf.shortname." ".strpart(pad.path, s:StringWidth(buf.shortname))
         else
             let type = (g:bufExplorerShowRelativePath) ? "relativename" : "fullname"
-            let path = substitute( buf[type], $HOME."\\>", "~", "" )
+            let path = buf[type]
             let line .= path
         endif
 

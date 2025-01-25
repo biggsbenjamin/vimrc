@@ -142,6 +142,10 @@ function! s:dotcase(word)
   return substitute(s:snakecase(a:word),'_','.','g')
 endfunction
 
+function! s:titlecase(word)
+  return substitute(s:spacecase(a:word), '\(\<\w\)','\=toupper(submatch(1))','g')
+endfunction
+
 call extend(Abolish, {
       \ 'camelcase':  s:function('s:camelcase'),
       \ 'mixedcase':  s:function('s:mixedcase'),
@@ -150,6 +154,7 @@ call extend(Abolish, {
       \ 'dashcase':   s:function('s:dashcase'),
       \ 'dotcase':    s:function('s:dotcase'),
       \ 'spacecase':  s:function('s:spacecase'),
+      \ 'titlecase':  s:function('s:titlecase')
       \ }, 'keep')
 
 function! s:create_dictionary(lhs,rhs,opts)
@@ -377,7 +382,7 @@ function! s:find_command(cmd,flags,word)
   " beginning of the line, and we can't use position flags (e.g., /foo/e).
   " If we use :norm /pattern, we leave ourselves vulnerable to "press enter"
   " prompts (even with :silent).
-  let cmd = (a:cmd =~ '[?!]$' ? '?' : '/')
+  let cmd = (a:cmd =~ '[?!]' ? '?' : '/')
   let @/ = s:pattern(dict,opts.boundaries)
   if opts.flags == "" || !search(@/,'n')
     return "norm! ".cmd."\<CR>"
@@ -569,6 +574,7 @@ call extend(Abolish.Coercions, {
       \ 'k': Abolish.dashcase,
       \ '.': Abolish.dotcase,
       \ ' ': Abolish.spacecase,
+      \ 't': Abolish.titlecase,
       \ "function missing": s:function("s:unknown_coercion")
       \}, "keep")
 

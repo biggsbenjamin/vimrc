@@ -7,7 +7,6 @@ call ale#Set('python_pyflyby_use_global', get(g:, 'ale_use_global_executables', 
 call ale#Set('python_pyflyby_options', '')
 call ale#Set('python_pyflyby_auto_pipenv', 0)
 call ale#Set('python_pyflyby_auto_poetry', 0)
-call ale#Set('python_pyflyby_auto_uv', 0)
 
 function! ale#fixers#pyflyby#GetExecutable(buffer) abort
     if (ale#Var(a:buffer, 'python_auto_pipenv') || ale#Var(a:buffer, 'python_pyflyby_auto_pipenv'))
@@ -20,11 +19,6 @@ function! ale#fixers#pyflyby#GetExecutable(buffer) abort
         return 'poetry'
     endif
 
-    if (ale#Var(a:buffer, 'python_auto_uv') || ale#Var(a:buffer, 'python_pyflyby_auto_uv'))
-    \ && ale#python#UvPresent(a:buffer)
-        return 'uv'
-    endif
-
     return ale#python#FindExecutable(a:buffer, 'python_pyflyby', ['tidy-imports'])
 endfunction
 
@@ -33,7 +27,7 @@ function! ale#fixers#pyflyby#Fix(buffer) abort
     let l:executable = ale#fixers#pyflyby#GetExecutable(a:buffer)
     let l:cmd = [ale#Escape(l:executable)]
 
-    if l:executable =~? 'pipenv\|poetry\|uv$'
+    if l:executable =~? 'pipenv\|poetry$'
         call extend(l:cmd, ['run', 'tidy-imports'])
     endif
 

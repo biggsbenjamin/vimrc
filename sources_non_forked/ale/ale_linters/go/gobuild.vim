@@ -6,6 +6,16 @@
 call ale#Set('go_go_executable', 'go')
 call ale#Set('go_gobuild_options', '')
 
+function! ale_linters#go#gobuild#GetCommand(buffer) abort
+    let l:options = ale#Var(a:buffer, 'go_gobuild_options')
+
+    " Run go test in local directory with relative path
+    return ale#go#EnvString(a:buffer)
+    \   . ale#Var(a:buffer, 'go_go_executable') . ' test'
+    \   . (!empty(l:options) ? ' ' . l:options : '')
+    \   . ' -c -o /dev/null ./'
+endfunction
+
 function! ale_linters#go#gobuild#GetMatches(lines) abort
     " Matches patterns like the following:
     "
@@ -40,12 +50,7 @@ call ale#linter#Define('go', {
 \   'aliases': ['go build'],
 \   'executable': {b -> ale#Var(b, 'go_go_executable')},
 \   'cwd': '%s:h',
-\   'command': {b ->
-\       ale#go#EnvString(b)
-\       . ale#Escape(ale#Var(b, 'go_go_executable')) . ' test'
-\       . ale#Pad(ale#Var(b, 'go_gobuild_options'))
-\       . ' -c -o /dev/null ./'
-\   },
+\   'command': function('ale_linters#go#gobuild#GetCommand'),
 \   'output_stream': 'stderr',
 \   'callback': 'ale_linters#go#gobuild#Handler',
 \   'lint_file': 1,

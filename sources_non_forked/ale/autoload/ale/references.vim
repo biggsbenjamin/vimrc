@@ -179,7 +179,9 @@ function! ale#references#Find(...) abort
     let l:column = min([l:column, len(getline(l:line))])
     let l:Callback = function('s:OnReady', [l:line, l:column, l:options])
 
-    for l:linter in ale#lsp_linter#GetEnabled(l:buffer)
-        call ale#lsp_linter#StartLSP(l:buffer, l:linter, l:Callback)
+    for l:linter in ale#linter#Get(&filetype)
+        if !empty(l:linter.lsp)
+            call ale#lsp_linter#StartLSP(l:buffer, l:linter, l:Callback)
+        endif
     endfor
 endfunction

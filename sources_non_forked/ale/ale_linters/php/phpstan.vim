@@ -57,14 +57,12 @@ function! ale_linters#php#phpstan#Handle(buffer, lines) abort
         return l:output
     endif
 
-    for l:key in keys(l:res.files)
-        for l:err in l:res.files[l:key].messages
-            call add(l:output, {
-            \   'lnum': l:err.line,
-            \   'text': l:err.message,
-            \   'type': 'E',
-            \})
-        endfor
+    for l:err in l:res.files[expand('#' . a:buffer .':p')].messages
+        call add(l:output, {
+        \   'lnum': l:err.line,
+        \   'text': l:err.message,
+        \   'type': 'E',
+        \})
     endfor
 
     return l:output

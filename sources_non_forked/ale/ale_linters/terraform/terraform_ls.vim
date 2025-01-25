@@ -30,7 +30,6 @@ endfunction
 
 call ale#linter#Define('terraform', {
 \   'name': 'terraform_ls',
-\   'aliases': ['terraformls'],
 \   'lsp': 'stdio',
 \   'executable': {b -> ale#Var(b, 'terraform_ls_executable')},
 \   'command': function('ale_linters#terraform#terraform_ls#GetCommand'),

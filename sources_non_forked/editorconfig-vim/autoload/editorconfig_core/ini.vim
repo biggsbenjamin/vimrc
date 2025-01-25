@@ -1,6 +1,6 @@
 " autoload/editorconfig_core/ini.vim: Config-file parser for
 " editorconfig-core-vimscript and editorconfig-vim.
-" Modified from the Python core's ini.py.
+" Modifed from the Python core's ini.py.
 
 " Copyright (c) 2012-2019 EditorConfig Team {{{2
 " All rights reserved.
@@ -190,7 +190,7 @@ function! s:parse(config_filename, target_filename, lines)
     endif
 
     return {'root': l:is_root, 'options': l:options}
-endfunction
+endfunction!
 
 " }}}1
 " === Helpers =========================================================== {{{1

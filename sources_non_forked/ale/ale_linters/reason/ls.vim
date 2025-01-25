@@ -15,7 +15,6 @@ endfunction
 
 call ale#linter#Define('reason', {
 \   'name': 'reason-language-server',
-\   'aliases': ['reason_ls'],
 \   'lsp': 'stdio',
 \   'executable': {buffer -> ale#Var(buffer, 'reason_ls_executable')},
 \   'command': '%e',

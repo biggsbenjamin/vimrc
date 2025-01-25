@@ -17,15 +17,13 @@ function! ale_linters#glsl#glslang#Handle(buffer, lines) abort
     " Matches patterns like the following:
     "
     " ERROR: 0:5: 'foo' : undeclared identifier
-    " or when using options like -V or -G or --target-env
-    " ERROR: filename:5: 'foo' : undeclared identifier
-    let l:pattern = '^\(.\+\): \(.\+\):\(\d\+\): \(.\+\)'
+    let l:pattern = '^\(.\+\): \(\d\+\):\(\d\+\): \(.\+\)'
     let l:output = []
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
         call add(l:output, {
         \   'lnum': str2nr(l:match[3]),
-        \   'col' : 0,
+        \   'col': str2nr(l:match[2]),
         \   'text': l:match[4],
         \   'type': l:match[1] is# 'ERROR' ? 'E' : 'W',
         \})

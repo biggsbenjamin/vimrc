@@ -6,7 +6,6 @@ call ale#Set('python_isort_use_global', get(g:, 'ale_use_global_executables', 0)
 call ale#Set('python_isort_options', '')
 call ale#Set('python_isort_auto_pipenv', 0)
 call ale#Set('python_isort_auto_poetry', 0)
-call ale#Set('python_isort_auto_uv', 0)
 
 function! ale#fixers#isort#GetExecutable(buffer) abort
     if (ale#Var(a:buffer, 'python_auto_pipenv') || ale#Var(a:buffer, 'python_isort_auto_pipenv'))
@@ -19,11 +18,6 @@ function! ale#fixers#isort#GetExecutable(buffer) abort
         return 'poetry'
     endif
 
-    if (ale#Var(a:buffer, 'python_auto_uv') || ale#Var(a:buffer, 'python_isort_auto_uv'))
-    \ && ale#python#UvPresent(a:buffer)
-        return 'uv'
-    endif
-
     return ale#python#FindExecutable(a:buffer, 'python_isort', ['isort'])
 endfunction
 
@@ -31,7 +25,7 @@ function! ale#fixers#isort#GetCmd(buffer) abort
     let l:executable = ale#fixers#isort#GetExecutable(a:buffer)
     let l:cmd = [ale#Escape(l:executable)]
 
-    if l:executable =~? 'pipenv\|poetry\|uv$'
+    if l:executable =~? 'pipenv\|poetry$'
         call extend(l:cmd, ['run', 'isort'])
     endif
 
@@ -42,7 +36,7 @@ function! ale#fixers#isort#FixForVersion(buffer, version) abort
     let l:executable = ale#fixers#isort#GetExecutable(a:buffer)
     let l:cmd = [ale#Escape(l:executable)]
 
-    if l:executable =~? 'pipenv\|poetry\|uv$'
+    if l:executable =~? 'pipenv\|poetry$'
         call extend(l:cmd, ['run', 'isort'])
     endif
 

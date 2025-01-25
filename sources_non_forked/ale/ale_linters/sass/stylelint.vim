@@ -5,7 +5,6 @@ call ale#Set('sass_stylelint_use_global', get(g:, 'ale_use_global_executables', 
 
 call ale#linter#Define('sass', {
 \   'name': 'stylelint',
-\   'output_stream': 'both',
 \   'executable': {b -> ale#path#FindExecutable(b, 'sass_stylelint', [
 \       'node_modules/.bin/stylelint',
 \   ])},

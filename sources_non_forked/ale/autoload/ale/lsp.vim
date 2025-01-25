@@ -424,7 +424,7 @@ function! s:SendInitMessage(conn) abort
     \                   'completionItem': {
     \                       'snippetSupport': v:false,
     \                       'commitCharactersSupport': v:false,
-    \                       'documentationFormat': ['plaintext', 'markdown'],
+    \                       'documentationFormat': ['plaintext'],
     \                       'deprecatedSupport': v:false,
     \                       'preselectSupport': v:false,
     \                   },
@@ -432,7 +432,7 @@ function! s:SendInitMessage(conn) abort
     \               },
     \               'hover': {
     \                   'dynamicRegistration': v:false,
-    \                   'contentFormat': ['plaintext', 'markdown'],
+    \                   'contentFormat': ['plaintext'],
     \               },
     \               'references': {
     \                   'dynamicRegistration': v:false,

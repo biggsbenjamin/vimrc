@@ -28,7 +28,7 @@ else
     hi! link NERDTreeNodeDelimiters Ignore
 endif
 
-"highlighting for directory nodes and file nodes
+"highlighing for directory nodes and file nodes
 syn match NERDTreeDirSlash #/# containedin=NERDTreeDir
 
 if g:NERDTreeDirArrowExpandable !=# ''

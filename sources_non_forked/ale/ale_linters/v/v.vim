@@ -4,6 +4,17 @@
 call ale#Set('v_v_executable', 'v')
 call ale#Set('v_v_options', '')
 
+function! ale_linters#v#v#GetCommand(buffer) abort
+    let l:options = ale#Var(a:buffer, 'v_v_options')
+
+    " Run v in local directory with relative path
+    let l:command = ale#Var(a:buffer, 'v_v_executable')
+    \   . ale#Pad(l:options)
+    \   . ' .' . ' -o /tmp/vim-ale-v'
+
+    return l:command
+endfunction
+
 function! ale_linters#v#v#Handler(buffer, lines) abort
     let l:dir = expand('#' . a:buffer . ':p:h')
     let l:output = []
@@ -62,11 +73,9 @@ endfunction
 
 call ale#linter#Define('v', {
 \   'name': 'v',
+\   'aliases': [],
 \   'executable': {b -> ale#Var(b, 'v_v_executable')},
-\   'command': {b ->
-\       '%e' . ale#Pad(ale#Var(b, 'v_v_options'))
-\       . ' . -o /tmp/vim-ale-v'
-\   },
+\   'command': function('ale_linters#v#v#GetCommand'),
 \   'output_stream': 'stderr',
 \   'callback': 'ale_linters#v#v#Handler',
 \   'lint_file': 1,

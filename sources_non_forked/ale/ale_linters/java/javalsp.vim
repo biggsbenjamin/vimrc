@@ -46,7 +46,6 @@ endfunction
 
 call ale#linter#Define('java', {
 \   'name': 'javalsp',
-\   'aliases': ['java_language_server'],
 \   'lsp': 'stdio',
 \   'executable': function('ale_linters#java#javalsp#Executable'),
 \   'command': function('ale_linters#java#javalsp#Command'),

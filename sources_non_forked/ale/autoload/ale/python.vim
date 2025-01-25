@@ -3,22 +3,18 @@
 
 call ale#Set('python_auto_pipenv', '0')
 call ale#Set('python_auto_poetry', '0')
-call ale#Set('python_auto_uv', '0')
 
 let s:sep = has('win32') ? '\' : '/'
 " bin is used for Unix virtualenv directories, and Scripts is for Windows.
 let s:bin_dir = has('unix') ? 'bin' : 'Scripts'
-" The default virtualenv directory names are ordered from the likely most
-" common names down to the least common. `.env` might be more common, but it's
-" also likely to conflict with a `.env` file for environment variables, so we
-" search for it last. (People really shouldn't use that name.)
 let g:ale_virtualenv_dir_names = get(g:, 'ale_virtualenv_dir_names', [
+\   '.env',
 \   '.venv',
 \   'env',
+\   've-py3',
 \   've',
-\   'venv',
 \   'virtualenv',
-\   '.env',
+\   'venv',
 \])
 
 function! ale#python#FindProjectRootIni(buffer) abort
@@ -44,7 +40,6 @@ function! ale#python#FindProjectRootIni(buffer) abort
         \|| filereadable(l:path . '/poetry.lock')
         \|| filereadable(l:path . '/pyproject.toml')
         \|| filereadable(l:path . '/.tool-versions')
-        \|| filereadable(l:path . '/uv.lock')
             return l:path
         endif
     endfor
@@ -193,9 +188,4 @@ endfunction
 " Detects whether a poetry environment is present.
 function! ale#python#PoetryPresent(buffer) abort
     return findfile('poetry.lock', expand('#' . a:buffer . ':p:h') . ';') isnot# ''
-endfunction
-
-" Detects whether a poetry environment is present.
-function! ale#python#UvPresent(buffer) abort
-    return findfile('uv.lock', expand('#' . a:buffer . ':p:h') . ';') isnot# ''
 endfunction

@@ -9,7 +9,6 @@ endfunction
 
 call ale#linter#Define('nix', {
 \   'name': 'rnix_lsp',
-\   'aliases': ['rnix'],
 \   'lsp': 'stdio',
 \   'executable': 'rnix-lsp',
 \   'command': '%e',

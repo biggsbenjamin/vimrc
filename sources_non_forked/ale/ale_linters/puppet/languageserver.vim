@@ -29,7 +29,6 @@ endfunction
 
 call ale#linter#Define('puppet', {
 \   'name': 'languageserver',
-\   'aliases': ['puppet_languageserver'],
 \   'lsp': 'stdio',
 \   'executable': {b -> ale#Var(b, 'puppet_languageserver_executable')},
 \   'command': '%e --stdio',

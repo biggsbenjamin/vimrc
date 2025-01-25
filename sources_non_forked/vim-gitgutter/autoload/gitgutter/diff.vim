@@ -4,6 +4,14 @@ let s:nomodeline = (v:version > 703 || (v:version == 703 && has('patch442'))) ? 
 
 let s:hunk_re = '^@@ -\(\d\+\),\?\(\d*\) +\(\d\+\),\?\(\d*\) @@'
 
+" True for git v1.7.2+.
+function! s:git_supports_command_line_config_override() abort
+  call gitgutter#utility#system(g:gitgutter_git_executable.' '.g:gitgutter_git_args.' -c foo.bar=baz --version')
+  return !v:shell_error
+endfunction
+
+let s:c_flag = s:git_supports_command_line_config_override()
+
 let s:temp_from = tempname()
 let s:temp_buffer = tempname()
 let s:counter = 0
@@ -115,16 +123,16 @@ function! gitgutter#diff#run_diff(bufnr, from, preserve_full_diff) abort
     endif
 
     " Write file from index to temporary file.
-    let index_name = gitgutter#utility#get_diff_base(a:bufnr).':'.gitgutter#utility#base_path(a:bufnr)
-    let cmd .= gitgutter#git(a:bufnr).' --no-pager show --textconv '.index_name.' > '.from_file.' || exit 0) && ('
+    let index_name = gitgutter#utility#get_diff_base(a:bufnr).':'.gitgutter#utility#repo_path(a:bufnr, 1)
+    let cmd .= g:gitgutter_git_executable.' '.g:gitgutter_git_args.' --no-pager show '.index_name.' > '.from_file.' && '
 
   elseif a:from ==# 'working_tree'
     let from_file = gitgutter#utility#repo_path(a:bufnr, 1)
   endif
 
   " Call git-diff.
-  let cmd .= gitgutter#git(a:bufnr).' --no-pager'
-  if gitgutter#utility#git_supports_command_line_config_override()
+  let cmd .= g:gitgutter_git_executable.' '.g:gitgutter_git_args.' --no-pager'
+  if s:c_flag
     let cmd .= ' -c "diff.autorefreshindex=0"'
     let cmd .= ' -c "diff.noprefix=false"'
     let cmd .= ' -c "core.safecrlf=false"'
@@ -144,6 +152,8 @@ function! gitgutter#diff#run_diff(bufnr, from, preserve_full_diff) abort
 
   let cmd .= ')'
 
+  let cmd = gitgutter#utility#cd_cmd(a:bufnr, cmd)
+
   if g:gitgutter_async && gitgutter#async#available()
     call gitgutter#async#execute(cmd, a:bufnr, {
           \   'out': function('gitgutter#diff#handler'),
@@ -152,9 +162,9 @@ function! gitgutter#diff#run_diff(bufnr, from, preserve_full_diff) abort
     return 'async'
 
   else
-    let [diff, error_code] = gitgutter#utility#system(cmd)
+    let diff = gitgutter#utility#system(cmd)
 
-    if error_code
+    if v:shell_error
       call gitgutter#debug#log(diff)
       throw 'gitgutter diff failed'
     endif
@@ -377,13 +387,7 @@ function! s:write_buffer(bufnr, file)
   endif
 
   if getbufvar(a:bufnr, '&fileformat') ==# 'dos'
-    if getbufvar(a:bufnr, '&endofline')
-      call map(bufcontents, 'v:val."\r"')
-    else
-      for i in range(len(bufcontents) - 1)
-        let bufcontents[i] = bufcontents[i] . "\r"
-      endfor
-    endif
+    call map(bufcontents, 'v:val."\r"')
   endif
 
   if getbufvar(a:bufnr, '&endofline')

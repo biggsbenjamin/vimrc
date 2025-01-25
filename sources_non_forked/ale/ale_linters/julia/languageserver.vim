@@ -13,7 +13,6 @@ endfunction
 
 call ale#linter#Define('julia', {
 \   'name': 'languageserver',
-\   'aliases': ['julials'],
 \   'lsp': 'stdio',
 \   'executable': {b -> ale#Var(b, 'julia_executable')},
 \   'command': function('ale_linters#julia#languageserver#GetCommand'),

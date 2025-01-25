@@ -26,27 +26,9 @@ function! s:AbbreviateMessage(text) abort
 endfunction
 
 function! s:GetCommand(buffer) abort
-    let l:cwd = s:GetCwd(a:buffer)
+    let l:file = ale#Escape(expand('#' . a:buffer . ':.'))
 
-    let l:file = !empty(l:cwd)
-    \   ? expand('#' . a:buffer . ':p')[len(l:cwd) + 1:]
-    \   : expand('#' . a:buffer . ':.')
-
-    return '%e rock --output-format=parsable ' . ale#Escape(l:file)
-endfunction
-
-function! s:GetCwd(buffer) abort
-    let l:markers = ['elvis.config', 'rebar.lock', 'erlang.mk']
-
-    for l:path in ale#path#Upwards(expand('#' . a:buffer . ':p:h'))
-        for l:marker in l:markers
-            if filereadable(l:path . '/' . l:marker)
-                return l:path
-            endif
-        endfor
-    endfor
-
-    return ''
+    return '%e rock --output-format=parsable ' . l:file
 endfunction
 
 call ale#linter#Define('erlang', {
@@ -54,6 +36,5 @@ call ale#linter#Define('erlang', {
 \   'callback': 'ale_linters#erlang#elvis#Handle',
 \   'executable': {b -> ale#Var(b, 'erlang_elvis_executable')},
 \   'command': function('s:GetCommand'),
-\   'cwd': function('s:GetCwd'),
 \   'lint_file': 1,
 \})

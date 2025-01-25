@@ -15,7 +15,7 @@ function! ale_linters#cmake#cmake_lint#Command(buffer) abort
     let l:executable = ale_linters#cmake#cmake_lint#Executable(a:buffer)
     let l:options = ale#Var(a:buffer, 'cmake_cmake_lint_options')
 
-    return ale#Escape(l:executable) . ' ' . l:options . ' %s'
+    return ale#Escape(l:executable) . ' ' . l:options . ' %t'
 endfunction
 
 function! ale_linters#cmake#cmake_lint#Handle(buffer, lines) abort

@@ -94,10 +94,9 @@ function! s:ExecuteFileRename(linter, options) abort
 endfunction
 
 function! ale#filerename#Execute() abort
-    let l:buffer = bufnr('')
     let l:lsp_linters = []
 
-    for l:linter in ale#lsp_linter#GetEnabled(l:buffer)
+    for l:linter in ale#linter#Get(&filetype)
         if l:linter.lsp is# 'tsserver'
             call add(l:lsp_linters, l:linter)
         endif
@@ -109,6 +108,7 @@ function! ale#filerename#Execute() abort
         return
     endif
 
+    let l:buffer = bufnr('')
     let l:old_name = expand('#' . l:buffer . ':p')
     let l:new_name = ale#util#Input('New file name: ', l:old_name, 'file')
 
