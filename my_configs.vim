@@ -31,16 +31,29 @@ let g:ale_set_highlights = 1
 " source for other completion plugins, like Deoplete.
 let g:ale_completion_enabled = 0
 let g:ale_sign_column_always = 1
-
-" Only run linting when saving the file
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
+let g:ale_python_auto_virtualenv = 1
+let g:ale_lint_on_enter = 1
 
 let g:ale_linters = {
-\   'python': ['pylint']
+\   'python': ['pylint','mypy']
 \}
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace', 'reorder-python-imports'],
 \   'python' : ['black']
 \}
+
+" seeing where the diffs are live! kewl
+let g:gitgutter_enabled=1
+
+" show . files
+let NERDTreeShowHidden=1
+
+" bringing up more detail for ale
+nmap  <leader>m :ALEDetail<cr>
+
+" auto close loclist window
+augroup CloseLoclistWindowGroup
+    autocmd!
+    autocmd QuitPre * if empty(&buftype) | lclose | endif
+augroup END
