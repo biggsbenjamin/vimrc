@@ -1,3 +1,6 @@
 [submodule "my_plugins/ycm"]
 	path = my_plugins/ycm
 	url = git@github.com:ycm-core/YouCompleteMe.git
+[submodule "my_plugins/lightline-bufferline"]
+	path = my_plugins/lightline-bufferline
+	url = git@github.com:mengelbrecht/lightline-bufferline.git

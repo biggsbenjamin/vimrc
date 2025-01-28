@@ -57,3 +57,6 @@ augroup CloseLoclistWindowGroup
     autocmd!
     autocmd QuitPre * if empty(&buftype) | lclose | endif
 augroup END
+
+" instant markdown over ssh maybe?
+let g:instant_markdown_open_to_the_world = 1
