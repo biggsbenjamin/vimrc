@@ -4,3 +4,12 @@
 [submodule "my_plugins/lightline-bufferline"]
 	path = my_plugins/lightline-bufferline
 	url = git@github.com:mengelbrecht/lightline-bufferline.git
+[submodule "pack/plugs/start/instant-md"]
+	path = pack/plugs/start/instant-md
+	url = https://github.com/instant-markdown/vim-instant-markdown.git
+[submodule "pack/plugs/start/vim-tmux-navigator"]
+	path = pack/plugs/start/vim-tmux-navigator
+	url = git@github.com:christoomey/vim-tmux-navigator.git
+[submodule "pack/plugs/start/vim-toml"]
+	path = pack/plugs/start/vim-toml
+	url = https://github.com/cespare/vim-toml.git
