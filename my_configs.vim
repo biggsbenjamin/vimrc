@@ -20,6 +20,11 @@ endtry
 nmap  <leader>e :Explore<cr>
 set noshowmode
 
+nnoremap <silent> <C-j> :<C-U>TmuxNavigateDown<cr>
+nnoremap <silent> <C-k> :<C-U>TmuxNavigateUp<cr>
+nnoremap <silent> <C-h> :<C-U>TmuxNavigateLeft<cr>
+nnoremap <silent> <C-l> :<C-U>TmuxNavigateRight<cr>
+
 autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
 
 " Not Disabling highlighting
