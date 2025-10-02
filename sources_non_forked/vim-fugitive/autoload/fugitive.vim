@@ -4,11 +4,6 @@
 " The functions contained within this file are for internal use only.  For the
 " official API, see the commented functions in plugin/fugitive.vim.
 
-if exists('g:autoloaded_fugitive')
-  finish
-endif
-let g:autoloaded_fugitive = 1
-
 " Section: Utility
 
 function! s:function(name) abort
@@ -2071,6 +2066,8 @@ function! s:Expand(rev, ...) abort
     endif
   elseif s:Slash(a:rev) =~# '^\a\a\+://'
     let file = substitute(a:rev, '\\\@<!\%(#\a\|%\x\x\)', '\\&', 'g')
+  elseif a:rev =~# '^:[!#%$]'
+    let file = ':0' . a:rev
   else
     let file = a:rev
   endif
@@ -2697,7 +2694,7 @@ function! s:MapStatus() abort
   call s:MapMotion('gP', "exe <SID>StageJump(v:count, 'Unpulled')")
   call s:MapMotion('gr', "exe <SID>StageJump(v:count, 'Rebasing')")
   call s:Map('n', 'C', ":echoerr 'fugitive: C has been removed in favor of cc'<CR>", '<silent><unique>')
-  call s:Map('n', 'a', ":<C-U>execute <SID>Do('Toggle',0)<CR>", '<silent>')
+  call s:Map('n', 'a', ":echoerr 'fugitive: a has been removed in favor of s'<CR>", '<silent><unique>')
   call s:Map('n', 'i', ":<C-U>execute <SID>NextExpandedHunk(v:count1)<CR>", '<silent>')
   call s:Map('n', "=", ":<C-U>execute <SID>StageInline('toggle',line('.'),v:count)<CR>", '<silent>')
   call s:Map('n', "<", ":<C-U>execute <SID>StageInline('hide',  line('.'),v:count)<CR>", '<silent>')
@@ -2940,20 +2937,34 @@ function! s:StatusRender(stat) abort
     endif
 
     let sequencing = []
-    if filereadable(fugitive#Find('.git/sequencer/todo', dir))
-      for line in reverse(readfile(fugitive#Find('.git/sequencer/todo', dir)))
+    try
+      let sequencer_todo = reverse(readfile(fugitive#Find('.git/sequencer/todo', dir)))
+    catch
+    endtry
+    if exists('sequencer_todo')
+      for line in sequencer_todo
         let match = matchlist(line, '^\(\l\+\)\s\+\(\x\{4,\}\)\s\+\(.*\)')
         if len(match) && match[1] !~# 'exec\|merge\|label'
           call add(sequencing, {'type': 'Rebase', 'status': get(s:rebase_abbrevs, match[1], match[1]), 'commit': match[2], 'subject': match[3]})
         endif
       endfor
-    elseif filereadable(fugitive#Find('.git/MERGE_MSG', dir))
+    else
+      try
+        let merge_msg = get(readfile(fugitive#Find('.git/MERGE_MSG', dir)), 0, '')
+      catch
+      endtry
+    endif
+    if exists('merge_msg')
       if filereadable(fugitive#Find('.git/CHERRY_PICK_HEAD', dir))
         let pick_head = fugitive#Execute(['rev-parse', '--short', 'CHERRY_PICK_HEAD', '--'], dir).stdout[0]
-        call add(sequencing, {'type': 'Rebase', 'status': 'pick', 'commit': pick_head, 'subject': get(readfile(fugitive#Find('.git/MERGE_MSG', dir)), 0, '')})
+        if !empty(pick_head)
+          call add(sequencing, {'type': 'Rebase', 'status': 'pick', 'commit': pick_head, 'subject': merge_msg})
+        endif
       elseif filereadable(fugitive#Find('.git/REVERT_HEAD', dir))
         let pick_head = fugitive#Execute(['rev-parse', '--short', 'REVERT_HEAD', '--'], dir).stdout[0]
-        call add(sequencing, {'type': 'Rebase', 'status': 'revert', 'commit': pick_head, 'subject': get(readfile(fugitive#Find('.git/MERGE_MSG', dir)), 0, '')})
+        if !empty(pick_head)
+          call add(sequencing, {'type': 'Rebase', 'status': 'revert', 'commit': pick_head, 'subject': merge_msg})
+        endif
       endif
     endif
 
@@ -2976,7 +2987,7 @@ function! s:StatusRender(stat) abort
     endif
 
     call s:AddSection(to, 'Rebasing ' . rebasing_head, rebasing)
-    call s:AddSection(to, get(get(sequencing, 0, {}), 'tous', '') ==# 'revert' ? 'Reverting' : 'Cherry Picking', sequencing)
+    call s:AddSection(to, get(get(sequencing, 0, {}), 'status', '') ==# 'revert' ? 'Reverting' : 'Cherry Picking', sequencing)
     call s:AddSection(to, 'Untracked', untracked)
     call s:AddDiffSection(to, stat, 'Unstaged', unstaged)
     call s:AddDiffSection(to, stat, 'Staged', staged)
@@ -7435,9 +7446,12 @@ function! s:BrowserOpen(url, mods, echo_copy) abort
   else
     if !exists('g:loaded_netrw')
       runtime! autoload/netrw.vim
+      runtime! autoload/netrw/os.vim
     endif
     if exists('*netrw#Open')
       return 'echo '.string(url).'|' . mods . 'call netrw#Open('.string(url).')'
+    elseif exists('*netrw#os#Open')
+      return 'echo '.string(url).'|' . mods . 'call netrw#os#Open('.string(url).')'
     elseif exists('*netrw#BrowseX')
       return 'echo '.string(url).'|' . mods . 'call netrw#BrowseX('.string(url).', 0)'
     elseif exists('*netrw#NetrwBrowseX')
@@ -8030,8 +8044,8 @@ function! fugitive#MapJumps(...) abort
       call s:MapMotion(']]', 'exe <SID>NextSection(v:count1)')
       call s:MapMotion('[]', 'exe <SID>PreviousSectionEnd(v:count1)')
       call s:MapMotion('][', 'exe <SID>NextSectionEnd(v:count1)')
-      call s:Map('nxo', '*', '<SID>PatchSearchExpr(0)', '<expr>')
-      call s:Map('nxo', '#', '<SID>PatchSearchExpr(1)', '<expr>')
+      call s:Map('no', '*', '<SID>PatchSearchExpr(0)', '<expr>')
+      call s:Map('no', '#', '<SID>PatchSearchExpr(1)', '<expr>')
     endif
     call s:Map('n', 'S',    ':<C-U>echoerr "Use gO"<CR>', '<silent><unique>')
     call s:Map('n', 'dq', ":<C-U>call fugitive#DiffClose()<CR>", '<silent>')
