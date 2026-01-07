@@ -3,7 +3,9 @@
 inoremap jk <Esc>
 set number
 
-" autocmd BufNewFile,BufRead *.v,*.sv set syntax=verilog
+autocmd BufNewFile,BufRead *.v set syntax=verilog
+autocmd BufNewFile,BufRead *.vo, *.vqm set syntax=verilog
+autocmd BufNewFile,BufRead *.do set syntax=tcl
 autocmd BufRead,BufNewFile *.jl set filetype=julia
 
 " Double space for clear highlighting AND close preview window
@@ -29,7 +31,7 @@ nnoremap <silent> <C-l> :<C-U>TmuxNavigateRight<cr>
 autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
 
 " Not Disabling highlighting
-let g:ale_set_highlights = 1
+"let g:ale_set_highlights = 0
 
 " Enable completion where available.
 " This setting must be set before ALE is loaded.
@@ -42,16 +44,21 @@ let g:ale_python_auto_uv = 1
 let g:ale_lint_on_enter = 1
 
 let g:ale_linters = {
-\   'python': ['mypy', 'ruff'], 
+\   'python': ['mypy', 'ruff', 'pyright'],
 \   'scala': ['metals'],
-\   'systemverilog': ['verilator']
+\   'systemverilog': ['vlog', 'verilator'],
+\   'verilog': ['vlog', 'verilator']
 \}
 " 'scalac', alt scala linter
 
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace', 'reorder-python-imports'],
-\   'python' : ['black']
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python' : ['ruff'],
+\   'scala' : ['scalafmt']
 \}
+
+" run the ale fixers upon saving - can't do sys v at the moment
+let g:ale_fix_on_save = 1
 
 " seeing where the diffs are live! kewl
 let g:gitgutter_enabled=1
@@ -59,11 +66,17 @@ let g:gitgutter_enabled=1
 " show . files
 let NERDTreeShowHidden=1
 
+" helpful info for ale
+nmap <leader>H :ALEInfo<cr>
 " bringing up more detail for ale
 nmap  <leader>m :ALEDetail<cr><c-w><c-p>
+" ale specific issues - won't work for python jedi
 nmap <leader>v :ALENextWrap<cr>
 nmap <leader>V :ALEPreviousWrap<cr>
-nmap <leader> :ALEGoToDefinition<cr>
+
+"nmap <leader>d :ALEGoToDefinition<cr>
+" swapping the ale definition for ycm
+nmap <leader>d :YcmCompleter GoTo<cr>
 
 " auto close loclist window
 augroup CloseLoclistWindowGroup
@@ -72,7 +85,7 @@ augroup CloseLoclistWindowGroup
 augroup END
 
 " instant markdown over ssh maybe?
-let g:instant_markdown_open_to_the_world = 1
+"let g:instant_markdown_open_to_the_world = 1
 
 " nicer msg formats
 let g:ale_echo_msg_error_str = 'E'
@@ -83,7 +96,10 @@ let g:ale_sign_error = 'E'
 let g:ale_sign_warning = 'W'
 let g:ale_sign_column_always = 1
 
-" ycm scala support
+" might be a helpful python thing?
+let g:ycm_global_ycm_extra_conf = '~/.vim_runtime/my_plugins/ycm/.ycm_extra_conf.py'
+
+" ycm scala and verilog support
 let g:ycm_language_server = [
             \{ 'name':'scala',
             \'filetypes' : ['scala'],
@@ -91,6 +107,10 @@ let g:ycm_language_server = [
             \ 'project_root_files': ['.bloop']
             \    }
             \]
-
+" { 'name':'verilog',
+"             \'filetypes' : ['verilog', 'systemverilog'],
+"             \'cmdline' : ['/home/ben/local/bin/verible-verilog-ls']
+"             \    }
+"
 " TODO resize shortcutk
 "nmap <c-w-Up> :resize -1<cr>
