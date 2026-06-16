@@ -21,7 +21,7 @@ The awesome version includes a lot of great plugins, configurations and color sc
 
 But for me:
 ```
-git clone --recurse-submodules https://github.com/biggsbenjamin/vimrc.git
+git clone --recurse-submodules git@github.com:biggsbenjamin/vimrc.git ~/.vtime
 sh ~/.vtime/install_awesome_vimrc.sh
 ```
 
