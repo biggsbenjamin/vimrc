@@ -31,6 +31,9 @@ sh ~/.vtime/install_awesome_vimrc.sh
 - download nodejs and npm, then sort out instant markdown
 - I'm planning to add my tmux conf here as well - will be a case of running a script to copy to the right place
 
+### I like the mononoki font - need the nerd patched one for the weird charaters:
+- `curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.tar.xz`
+
 ### Install for multiple users
 To install for multiple users, the repository needs to be cloned to a location accessible for all the intended users.
 
