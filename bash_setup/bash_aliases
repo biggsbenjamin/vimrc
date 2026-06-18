@@ -1,0 +1,25 @@
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# some more ls aliases
+alias ll='ls -alhF --time-style=long-iso'
+alias la='ls -Ah'
+alias l='ls -CFh'
+
+# git aliases, bit naughty to overwrite ghostscript
+alias gitlogin="ssh-add ~/.ssh/think-ben"
+alias gs="git status"
+alias ga="git add $@"
+alias gb="git branch -a"
+alias gc="git commit -m $1"
+alias gsl='git stash list'
+
+# some functions for checking if quartus and jtag have been messy
+psj() {
+    ps -aux | grep jtag
+}
+
+psqj() {
+    ps -aux | grep quartus | grep jtag
+}

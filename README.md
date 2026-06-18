@@ -19,17 +19,28 @@ The awesome version includes a lot of great plugins, configurations and color sc
 	git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
 	sh ~/.vim_runtime/install_awesome_vimrc.sh
 
-But for me:
+# But for me:
 ```
 git clone --recurse-submodules git@github.com:biggsbenjamin/vimrc.git ~/.vtime
 sh ~/.vtime/install_awesome_vimrc.sh
 ```
 
-### Some more things just for me:
+# Some more things just for me:
 
 - build ycm - follow the readme instructions, golang required for ease
 - download nodejs and npm, then sort out instant markdown
-- I'm planning to add my tmux conf here as well - will be a case of running a script to copy to the right place
+- install tmux conf and tpm from `tmux_setup`
+- add the bash aliases from `bash_setup`
+- Install fzf, add it to bash, I might add this to vim later but ctrlp works for now [fzf](https://github.com/junegunn/fzf/tree/master)
+
+# My extra plugins:
+- lightline bufferline
+- youcompleteme
+
+### These plugins are using builtin vim pkg man:
+- instant markdown - viewer for markdown files
+- tmux navigator - helps going between vim and tmux
+- toml (might not be needed anymore)
 
 ### I like the mononoki font - need the nerd patched one for the weird charaters:
 - `curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Mononoki.tar.xz`
@@ -53,36 +64,9 @@ Some other fonts that Awesome will try to use:
 * [Hack](http://sourcefoundry.org/hack/)
 * [Source Code Pro](https://adobe-fonts.github.io/source-code-pro/)
 
-## How to install the Basic version?
-
-The basic version is just one file and no plugins. Just copy [basic.vim](https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim) and paste it into your vimrc.
-
-The basic version is useful to install on remote servers where you don't need many plugins, and you don't do many edits.
-
-	git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
-	sh ~/.vim_runtime/install_basic_vimrc.sh
-
-
-## How to install on Windows?
-
-Use [gitforwindows](http://gitforwindows.org/) to checkout the repository and run the installation instructions above. No special instructions needed ;-)
-
-
 ## How to install on Linux
 
 If you have vim aliased as `vi` instead of `vim`, make sure to either alias it: `alias vi=vim`. Otherwise, `apt-get install vim`
-
-
-## How to update to latest version?
-
-Just do a git rebase!
-
-
-    cd ~/.vim_runtime
-    git reset --hard
-    git clean -d --force
-    git pull --rebase
-    python update_plugins.py  # use python3 if python is unavailable
 
 ## Some screenshots
 
@@ -121,8 +105,6 @@ I recommend reading the docs of these plugins to understand them better. Each pl
 * [gist-vim](https://github.com/mattn/gist-vim) Easily create gists from Vim using the `:Gist` command
 * [vim-indent-guides](https://github.com/nathanaelkane/vim-indent-guides) Is a plugin for visually displaying indent levels in Vim
 * [editorconfig-vim](https://github.com/editorconfig/editorconfig-vim) EditorConfig helps maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs
-* [copilot.vim](https://github.com/github/copilot.vim) Plugin for GitHub Copilot (AI autocompletion FTW 😅)
-
 
 ## Included color schemes
 
